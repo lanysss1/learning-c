@@ -1,0 +1,14 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int main() {
+    float n1, n2, media;
+    printf("Informe um numero: ");
+    scanf("%f", &n1);
+    printf("Informe outro numero: ");
+    scanf("%f", &n2);
+    media = (n1 + n2)/2;
+    printf("A media entre %.2f e %.2f e igual a: %.2f\n", n1, n2, media);
+
+    return 0;
+}
