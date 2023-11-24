@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    double m, a , imc;
+    printf("Massa (kg): ");
+    scanf("%lf", &m);
+    printf("Altura(m): ");
+    scanf("%lf", &a);
+    imc= m/(pow(a, 2));
+    printf("imc %2.2f: ",imc);
+    if ((imc>=18.5)&&(imc<25)) {
+        printf("Parabens! voce esta no seu peso ideal ");
+    } else {
+        printf("Voce nao esta na faixa ideal de peso! ");
+    }
+
+    return 0;
+}
