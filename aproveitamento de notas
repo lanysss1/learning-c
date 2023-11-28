@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int main () {
+    double n1, n2, media;
+    printf("Primeira nota: ");
+    scanf("%lf", &n1);
+    printf("Segunda nota: ");
+    scanf("%lf", &n2);
+    media = (n1 + n2)/2;
+    printf("A media e:%.2lf\n", media);
+
+    if (media >= 9.0 && media <= 10.0) {
+        printf("Aproveitamento A\n");
+    } else if (media >= 8.0 && media < 9.0) {
+        printf("Aproveitamento B\n");
+    } else if (media >= 7.0 && media < 8.0) {
+        printf("Aproveitamento C\n");
+    } else if (media >= 6.0 && media < 7.0) {
+        printf("Aproveitamento D\n");
+    } else if (media >= 5.0 && media < 6.0) {
+        printf("Aproveitamento E\n");
+    } else if (media < 5.0) {
+        printf("Aproveitamento F\n");
+    } else {
+        printf("Nada ve mn\n");
+    }
+
+
+    return 0;
+    }
