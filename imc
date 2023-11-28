@@ -8,12 +8,22 @@ int main() {
     printf("Altura(m): ");
     scanf("%lf", &a);
     imc= m/(pow(a, 2));
-    printf("imc %2.2f: ",imc);
-    if ((imc>=18.5)&&(imc<25)) {
-        printf("Parabens! voce esta no seu peso ideal ");
+    printf("imc %2.2f: \n",imc);
+    if (imc < 17){
+        printf("Muito abaixo do peso");
+    } else if ((imc >= 17)&&(imc < 18.5)) {
+        printf("Abaixo do peso");
+    } else if ((imc >= 18.5)&&(imc < 25)) {
+        printf("Peso ideal");
+    } else if ((imc >= 25)&&(imc < 30)) {
+        printf("Sobrepeso");
+    } else if ((imc >= 30)&&(imc < 35)) {
+        printf("Obesidade");
+    } else if ((imc >= 35)&&(imc < 40)) {
+        printf("Obesidade severa");
     } else {
-        printf("Voce nao esta na faixa ideal de peso! ");
+        printf("Obesidade Morbida");
     }
-
+    
     return 0;
 }
