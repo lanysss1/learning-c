@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+int main () {
+    char nome[100];
+    float sal, nsal; 
+    int dep;
+    printf("Qual o nome do funcionario?\n ");
+    scanf("%s", nome);
+    printf("Qual o salario do funcionario?\n ");
+    scanf("%f", &sal);
+    printf("Qual e a quantidade de dependentes?\n ");
+    scanf("%d",&dep);
+
+    switch (dep) {
+        case 0:
+            nsal = sal + (sal*5/100);
+            break;
+        case 1:
+        case 2:
+        case 3:
+            nsal = sal + (sal*10/100);
+            break;
+        case 4:
+        case 5:
+        case 6:
+            nsal = sal + (sal*15/100);
+            break;
+        default:
+            nsal = sal + (sal*18/100);
+            break;
+    }
+    printf("O novo salario de %s sera de R$%.2f\n", nome, nsal);
+
+    return 0;
+}
