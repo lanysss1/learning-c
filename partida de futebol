@@ -1,0 +1,28 @@
+//partida de futebol
+#include <stdio.h>
+
+int main(){
+    char t1[20], t2[20];
+    int g1, g2;
+    char resultado[50];
+    printf("Qual o nome do primeiro time? \n");
+    scanf("%s", &t1);
+    printf("Qual o nome do segundo time? \n");
+    scanf("%s", &t2);
+    printf("Quantos gols do %s? ", t1);
+    scanf("%d", &g1);
+    printf("Quantos gols do %s? ", t2);
+    scanf("%d", &g2);
+
+   if (g1 > g2) {
+        sprintf(resultado, "Goleada a favor de %s", t1);
+    } else if (g2 > g1) {
+        sprintf(resultado, "Goleada a favor de %s", t2);
+    } else {
+        sprintf(resultado, "Empate");
+    }
+    // Imprimir o resultado
+    printf("Resultado da partida entre %s e %s: %s\n", t1, t2, resultado);
+
+    return 0;
+}
