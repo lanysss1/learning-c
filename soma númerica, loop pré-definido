@@ -1,0 +1,23 @@
+//soma numérica 
+#include <stdio.h>
+int main() {
+    int num, soma = 0, maior = 0, menor;
+    int i = 0; 
+    
+    while (i < 10) { 
+        printf("Digite o valor: ");
+        scanf("%d", &num);
+        soma = soma + num;
+        i = i + 1;
+        if (num > maior) {
+            maior = num;
+        } else if (num < menor) {
+            menor = num;
+        }
+    }
+
+    printf("A soma de todos os valores eh :%d \n ", soma);
+    printf("O maior numro digitado foi: %d \n", maior);
+    printf("O menor numero digitado foi:%d \n", menor);
+    return 0;
+}
