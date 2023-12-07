@@ -1,0 +1,18 @@
+#include <stdio.h>
+int main() {
+    int numero, vezes, tnegativo = 0;
+    printf("Aproveite! quantas vezes vc quer fornecer numeros? :o ");
+        if (scanf("%d", &vezes) != 1) { //condição para leitura de dados de entrada
+            printf("Entrada invalida. Por favor, forneca um numero inteiro.\n");
+            return 1; // Retorna um código de erro
+        }
+    for(int i = 1; i <= vezes; i++) {
+        printf("Manda um numero :D ");
+        scanf("%d", &numero);
+            if(numero < 0){
+                tnegativo = tnegativo + 1;
+            }
+    }
+    printf("Foram digitados %d valores negativos\n ", tnegativo);
+    return 0;
+}
