@@ -1,0 +1,14 @@
+#include <stdio.h>
+
+int main() {
+    int  i = 1;
+    double numero, resultado;
+    printf("Quer o resultado de qual tabuada? :D ");
+    scanf("%lf", &numero);
+    while (i <= 10) {  //condição para o contador i
+        resultado = numero * i;
+        printf("%3.2f x %d = %5.2f \n", numero, i, resultado);
+        i++;
+    }
+    return 0;
+}
