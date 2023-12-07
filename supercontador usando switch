@@ -1,0 +1,22 @@
+#include <stdio.h>
+int main(){
+    int escolha;
+    printf("Seja bem vindo ao fodendo supercontador!! \n");
+    printf("------------------------\nEm que posso te ajudar?\nTenho um cardapio muito bom\n");
+    printf("Voce pode escolher um numero:\n[1]para mim contar de 1 ate 10\n[2]para mim contar de 10 ate 1\n");
+    scanf("%d", &escolha);
+    switch(escolha){
+        case 1:
+            printf("1, 2, 3, 4, 5, 6, 7, 8, 9 e finalmente 10 weeeee\n");
+            break;
+        case 2:
+            printf("bem sagaz vc, enfim...10, 9, 8, 7, 6, 5, 4, 3, 2, 1\n ");
+            break;
+    }
+    if(escolha != 1 && escolha != 2){
+        printf("Aaaaaa vc n ta sabendo brincar -.-");
+        return 1;
+    }
+    printf("I'm a machine learning, yieeepieee ");
+    return 0;
+}
