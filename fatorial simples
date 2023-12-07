@@ -1,0 +1,16 @@
+//fatorial 
+#include <stdio.h>
+int main() {
+    int cont, numero, fat = 1;
+    printf("Digite um numero ");
+    scanf("%d", &numero);
+    cont = numero;
+    while(cont >= 1) {
+        fat = fat * cont;
+        cont--;
+    }
+    printf("O valor do fatorial de %d e igual a %d\n ", numero, fat);
+
+    
+    return 0;
+}
