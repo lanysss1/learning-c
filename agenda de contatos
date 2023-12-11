@@ -1,0 +1,164 @@
+// Três bibliotecas padrão
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Registro data
+typedef struct {
+   int dia,mes,ano;
+} tdata;
+
+// Registro contatos
+typedef struct {
+   char nome[50];
+   char fone[20];
+   tdata dtnasc;
+   char sit;  //A para Ativo, E para EXcluído
+} tcontato;
+
+// Carrega contatos do disco e acrescenta 1000 entradas vazias na agenda.
+tcontato * leitura(char filename[], int *qc) {
+    FILE *fp;
+    tcontato *v;
+    int i;
+    long tb;
+    fp=fopen(filename, "rb");   // Abre o arquivo para leitura binária
+    if (fp==NULL) { *qc=0; tb=0;}  // Se o arquivo não existir, inicializa a quantidade de contatos e o tamanho total 
+    else { //Calcula o tamanho total do arquivo 
+        fseek(fp, 0, SEEK_END);
+        tb=ftell(fp);
+        *qc=tb/sizeof(tcontato);
+        fseek(fp, 0, SEEK_SET);
+    }
+    tb=tb+ 1000*sizeof(tcontato);  // adicionando 1000 espaços no vetor
+    v=(tcontato *) malloc(tb);
+
+    //Lê os contatos do arquivo para o vetor 
+    for(i=0; i<*qc; i++) {
+        fread(&v[i], sizeof(tcontato), 1, fp);
+    }
+    //Fecha o arquivo se estiver aberto
+    if (fp) fclose(fp);
+    return v;
+}
+
+// Permite incluir contatos. Encerra com "fim".
+int incluir(tcontato *v, int *qc) {
+    fflush(stdin);
+    char nome[50];
+    int i;
+    printf("Nome: "); gets(nome); //solicita o nome do contato
+    i=*qc;
+    //Enquanto o nome não for fim e não ultrapassar o limite de contatos...
+    while (strcmpi(nome, "fim") !=0 && i<*qc+1000) {
+        strcpy(v[i].nome, nome);   //Copia o nome para a estrutura de contatos
+        printf("Fone: "); gets(v[i].fone);  //Solicita e armazena o telefone
+        fflush(stdin);
+        printf("Data Nascimento: ");  //Solicita e armazena a data de nascimento 
+        scanf("%d/%d/%d", &v[i].dtnasc.dia,&v[i].dtnasc.mes, &v[i].dtnasc.ano);
+        v[i].sit='A'; //Define o contato como Ativo
+        i++;
+        fflush(stdin);
+        printf("Nome: "); gets(nome); //Solicita o próximo nome 
+    }
+    *qc=i;  //Atualiza a quantidade total de contatos
+    return 0;
+}
+
+// Salva a agenda em disco. Somente entradas preenchidas.
+int salvar(char filename[], tcontato *v, int qc) {
+   FILE *fp;
+   int i;
+   fp=fopen(filename, "wb");   //Abre o arquivo para escrita binária
+   if (fp==NULL) return -1;   //Retorna erro se não for possível abrir o arquivo 
+
+    //Escreve os contatos no arquivo, excluindo os marcados como excluídos
+   for(i=0; i<qc; i++){
+        if(v[i].sit!='E') fwrite(&v[i], sizeof(tcontato), 1, fp);
+   }
+    //fecha o arquivo
+   fclose(fp);
+   return 0;
+}
+
+// Lista a agenda.
+void listar(tcontato *v, int qc){
+    int i;
+    //Itera os contatos e imprime na tela 
+    for(i=0; i<qc; i++)
+    if(v[i].sit!='E'){
+        printf("%-30s %-20s  %d/%d/%d\n", v[i].nome, v[i].fone,
+      v[i].dtnasc.dia,
+      v[i].dtnasc.mes,
+      v[i].dtnasc.ano);
+    }
+
+    system("pause");
+}
+//Busca um contato na agenda 
+void buscar(tcontato *v, int qc){
+    fflush(stdin);
+    char nome[50];
+    int i, excluir=0,encontrado=0;
+    printf("Que pessoa gostaria de buscar?\n"); gets(nome);  //Solicita o nome a ser buscado 
+    for(i=0;i<qc;i++){   //Itera sobre os contatos para encontrar o nome
+        if(strcmpi(nome,v[i].nome)==0){
+          printf("%-30s  %-20s  %d/%d/%d\n", v[i].nome, v[i].fone,  //Imprime os detalhes do contato
+            v[i].dtnasc.dia,
+            v[i].dtnasc.mes,
+            v[i].dtnasc.ano);
+            printf("Gostaria de exclui-lo? (1 para sim, 0 para nao)\n"); //Pergunta se deseja excluir o contato
+            scanf("%i",&excluir);
+            encontrado=1;
+            if(excluir==1) v[i].sit='E';  //Marca o contato como excluido se a opção for 1
+        }
+    }
+    if(encontrado=0) printf("Pessoa nao encontrada\n");  //Informa se o contato não foi encontrado 
+}
+void lixeira(tcontato *v, int qc){   //Exibe contatos marcados como excluídos e oferece opção de apagar permanentemente 
+    int i, opcao, encontrado = 0;
+    for(i = 0; i < qc; i++) {   //Itera sobre os contatos marcados como excluídos e os exibe
+        if(v[i].sit == ' ') {
+            printf("%d. %-30s %-20s  %d/%d/%d\n", i + 1, v[i].nome, v[i].fone,
+                   v[i].dtnasc.dia,
+                   v[i].dtnasc.mes,
+                   v[i].dtnasc.ano);
+            encontrado = 1;
+        }
+    }
+    if(!encontrado) {   //Se não houver contato na lixeira, informa o usuário
+        printf("Nenhum registro na lixeira.\n");
+        return;
+    }
+    printf("Deseja apagar registros da lixeira? (1 para sim)");
+    scanf("%d", &opcao);
+    if(opcao==1) {   //Se a opção for 1, marca os contatos na lixeira como excluídos definitivamente
+      for(i=0;i<qc;i++){
+        if(v[i].sit == 'E') v[i].sit = ' ';
+      }
+        printf("Registros removidos da lixeira.\n");
+    }
+}
+
+// Função principal.
+int main() {
+  int qc, escolha;
+  tcontato *agenda;
+  agenda = leitura("C:\\Agenda.dad", &qc);   //Carrega a agenda do disco 
+  do{   //Loop principal para interação com o usuário
+    printf("Gostaria de finalizar (0), incluir (1), listar (2), buscar(3), ver a lixeira (4)?\n"); //Exibe opções par o usuário 
+    scanf("%i",&escolha);
+    switch(escolha){  //Executa a ação correspndente à cada escolha 
+        case 1:
+            incluir(agenda, &qc); break;
+        case 2:
+            listar(agenda, qc); break;
+        case 3:
+            buscar(agenda,qc); break;
+        case 4:
+            lixeira(agenda,qc); break;
+    }
+  } while(escolha!=0);    //Continua o loop atè que o usuário escolha finalisar(0)
+  salvar("C:\\Agenda.dad", agenda, qc);   //Salva a agenda de volta no disco 
+  return 0;
+}
