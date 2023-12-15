@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Registro data
+typedef struct {
+   int dia,mes,ano;
+} tdata;
+
+// Registro contatos
+typedef struct {
+   char nome[50];
+   char fone[20];
+   tdata dtnasc;
+   char sit;
+} tcontato;
+
+// Carrega contatos do disco e acrescenta 1000 entradas vazias na agenda.
+tcontato * leitura(char filename[], int *qc) {
+    FILE *fp;
+    tcontato *v;
+    int i;
+    long tb;
+    fp=fopen(filename, "rb");
+    if (fp==NULL) { *qc=0; tb=0;}
+    else {
+        fseek(fp, 0, SEEK_END);
+        tb=ftell(fp);
+        *qc=tb/sizeof(tcontato);
+        fseek(fp, 0, SEEK_SET);
+    }
+    tb=tb+ 1000*sizeof(tcontato);  // adicionando 1000 espa�os no vetor
+    v=(tcontato *) malloc(tb);
+
+    for(i=0; i<*qc; i++) {
+        fread(&v[i], sizeof(tcontato), 1, fp);
+    }
+
+    if (fp) fclose(fp);
+    return v;
+}
+
+// Permite incluir contatos. Encerra com "fim".
+int incluir(tcontato *v, int *qc) {
+    fflush(stdin);
+    char nome[50];
+    int i;
+    printf("Nome: "); gets(nome);
+    i=*qc;
+    while (strcmpi(nome, "fim") !=0 && i<*qc+1000) {
+        strcpy(v[i].nome, nome);
+        printf("Fone: "); gets(v[i].fone);
+        fflush(stdin);
+        printf("Data Nascimento: ");
+        scanf("%d/%d/%d", &v[i].dtnasc.dia,&v[i].dtnasc.mes, &v[i].dtnasc.ano);
+        v[i].sit='A'; //Ativo
+        i++;
+        fflush(stdin);
+        printf("Nome: "); gets(nome);
+    }
+    *qc=i;
+    return 0;
+}
+
+// Salva a agenda em disco. Somente entradas preenchidas.
+int salvar(char filename[], tcontato *v, int qc) {
+   FILE *fp;
+   int i;
+   fp=fopen(filename, "wb");
+   if (fp==NULL) return -1;
+
+   for(i=0; i<qc; i++){
+        if(v[i].sit=='A') fwrite(&v[i], sizeof(tcontato), 1, fp);
+   }
+
+   fclose(fp);
+   return 0;
+}
+
+// Lista a agenda.
+void listar(tcontato *v, int qc){
+    int i;
+    for(i=0; i<qc; i++)
+    if(v[i].sit=='A') {
+    	printf("%-30s %-20s  %d/%d/%d\n", v[i].nome, v[i].fone,
+      v[i].dtnasc.dia,
+      v[i].dtnasc.mes,
+      v[i].dtnasc.ano);
+    }
+}
+
+void buscar(tcontato *v, int qc){
+    fflush(stdin);
+    char nome[50];
+    int i, excluir=0,encontrado=0;
+    printf("Que pessoa gostaria de buscar?\n"); gets(nome);
+    for(i=0;i<qc;i++){
+        if(strcmpi(nome,v[i].nome)==0){
+          printf("%-30s  %-20s  %d/%d/%d\n", v[i].nome, v[i].fone,
+            v[i].dtnasc.dia,
+            v[i].dtnasc.mes,
+            v[i].dtnasc.ano);
+            printf("Gostaria de exclui-lo? (1 para sim, 0 para nao)\n");
+            scanf("%i",&excluir);
+            encontrado=1;
+            if(excluir==1) v[i].sit='E';
+        }
+    }
+    if(encontrado=0) printf("Pessoa nao encontrada\n");
+}
+void lixeira(tcontato *v, int qc){
+    int i, opcao, encontrado = 0;
+    char nome[50];
+    for(i = 0; i < qc; i++) {
+        if(v[i].sit == 'E') {
+            printf("%-30s %-20s  %d/%d/%d\n", v[i].nome, v[i].fone,
+                   v[i].dtnasc.dia,
+                   v[i].dtnasc.mes,
+                   v[i].dtnasc.ano);
+            encontrado = 1;
+        }
+    }
+    if(!encontrado) {
+        printf("Nenhum registro na lixeira.\n");
+        return;
+    }
+    do{
+    	printf("Deseja restaurar algum contato? (1 para sim, 0 para nao)?\n");
+    	scanf("%d", &opcao);
+    	if(opcao==1) {
+    		printf("Qual contato deseja restaurar?\n");
+    		fflush(stdin);
+			gets(nome);
+      		for(i=0;i<qc;i++){
+        		for(i=0;i<qc;i++){
+        		if(strcmpi(nome,v[i].nome)==0) v[i].sit='A';
+      			}
+    		}
+    		printf("Restaurado.\n");
+		}
+	}while(opcao!=0);
+    opcao=0;
+    printf("Deseja apagar registros da lixeira? (1 para sim, 0 para nao)\n");
+    scanf("%d", &opcao);
+    if(opcao==1) {
+      for(i=0;i<qc;i++){
+        if(v[i].sit == 'E') v[i].sit = ' ';
+      }
+        printf("Registros removidos da lixeira.\n");
+    }
+}
+void alterar(tcontato *v, int qc){
+	int i, opcao, encontrado = 0;
+    char nome[50];
+	printf("Qual contato quer alterar?\n");
+	fflush(stdin);
+	gets(nome);
+	printf("Oque quer alterar? (1 para nome, 2 para fone e 3 para data de nascimneto)\n");
+	scanf("%d",&opcao);
+	for(i=0;i<qc;i++){
+        for(i=0;i<qc;i++){
+        	if(strcmpi(nome,v[i].nome)==0){
+        		if(opcao==1){
+        			printf("Nome: ");
+					fflush(stdin);
+					gets(nome);
+        			strcpy(v[i].nome, nome);
+				}
+        		fflush(stdin);
+        		if(opcao==2){
+        			printf("Fone: "); fflush(stdin); gets(v[i].fone);
+				}
+        		fflush(stdin);
+        		if(opcao==3){
+        			printf("Data Nascimento: ");
+                    fflush(stdin);                        
+        			scanf("%d/%d/%d", &v[i].dtnasc.dia,&v[i].dtnasc.mes, &v[i].dtnasc.ano);
+				}
+        	}
+      	}
+	}
+}
+
+// Fun��o principal.
+int main() {
+  int qc, escolha;
+  tcontato *agenda;
+  agenda = leitura("C:\\Agenda.dad", &qc);
+  do{
+        printf("\n=============================\n");
+        printf("        Menu Principal           \n");
+        printf("------------------------------\n");
+        printf(" 0. Finalizar\n");
+        printf(" 1. Incluir Contato\n");
+        printf(" 2. Listar Contatos\n");
+        printf(" 3. Buscar Contato\n");
+        printf(" 4. Ver Lixeira\n");
+        printf(" 5. Alterar Contato\n");
+        printf(" 6. Salvar\n");
+        printf("=============================\n");
+        printf("Escolha uma opcao (0-6): ");
+
+    scanf("%i",&escolha);
+    switch(escolha){
+        case 1:
+            incluir(agenda, &qc); break;
+        case 2:
+            listar(agenda, qc); break;
+        case 3:
+            buscar(agenda,qc); break;
+        case 4:
+            lixeira(agenda,qc); break;
+        case 5:
+        	alterar(agenda,qc); break;
+        case 6:
+        	salvar("C:\\Agenda.dad", agenda, qc); break;
+    }
+  } while(escolha!=0);
+  return 0;
+}
